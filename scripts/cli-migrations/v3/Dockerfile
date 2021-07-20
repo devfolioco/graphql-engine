@@ -1,9 +1,9 @@
 ARG SERVER_IMAGE_TAG
 
-# FROM hasura/graphql-engine:${SERVER_IMAGE_TAG}
+FROM hasura/graphql-engine:${SERVER_IMAGE_TAG}
 
 ## Use the following image for ARM
-FROM fedormelexin/graphql-engine-arm64:${SERVER_IMAGE_TAG}
+# FROM fedormelexin/graphql-engine-arm64:${SERVER_IMAGE_TAG}
 
 RUN apt-get update && apt-get install -y netcat
 
@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y netcat
 ENV HASURA_GRAPHQL_SHOW_UPDATE_NOTIFICATION=false
 
 COPY docker-entrypoint.sh /bin/
-# COPY cli-hasura-linux-amd64 /bin/hasura-cli
+COPY cli-hasura-linux-amd64 /bin/hasura-cli
 
 ## Use the following image for ARM
-COPY cli-hasura-linux-arm64 /bin/hasura-cli
+# COPY cli-hasura-linux-arm64 /bin/hasura-cli
 
 RUN chmod +x /bin/hasura-cli 
 
