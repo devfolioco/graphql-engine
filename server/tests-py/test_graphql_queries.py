@@ -9,15 +9,37 @@ pytestmark = pytest.mark.allow_server_upgrade_test
 usefixtures = pytest.mark.usefixtures
 
 
-@pytest.mark.parametrize("transport", ['http', 'websocket'])
 @pytest.mark.parametrize("backend", ['mysql'])
 @usefixtures('per_class_tests_db_state')
 class TestGraphQLQueryBasicMySQL:
 
-    # initialize the metadata
-    def test_replace_metadata(self, hge_ctx, transport):
-        if transport == 'http':
-            check_query_f(hge_ctx, self.dir() + '/replace_metadata.yaml')
+    # initialize the metadata with default 'http' transport fixture
+    def test_replace_metadata(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/replace_metadata.yaml')
+
+    def test_select_query_author(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/basic.yaml')
+
+    def test_select_quoted_col(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/select_query_author_quoted_col.yaml')
+
+    def test_select_offset_limit(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/select_query_author_limit.yaml')
+
+    def test_select_query_ignore_author(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/select_query_author.yaml')
+
+    def test_select_offset(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/select_query_author_offset.yaml')
+
+    def test_select_limit(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/select_query_author_limit.yaml')
+
+    def test_col_not_present(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/select_query_author_col_not_present_err.yaml')
+
+    def test_non_tracked_table(self, hge_ctx):
+        check_query_f(hge_ctx, self.dir() + '/select_query_non_tracked_table_err.yaml')
 
     @classmethod
     def dir(cls):
@@ -306,7 +328,7 @@ class TestGraphQLQueryBasicCitus:
 @pytest.mark.parametrize("transport", ['http', 'websocket'])
 @pytest.mark.parametrize("backend", ['citus', 'postgres'])
 @usefixtures('per_class_tests_db_state')
-class TestGraphQLQueryFragments:
+class TestGraphQLQueryFragmentsCommon:
 
     def test_select_query_top_level_fragment(self, hge_ctx, transport):
         check_query_f(hge_ctx, self.dir() + '/select_query_top_level_fragment.yaml', transport)
@@ -604,6 +626,15 @@ class TestGraphqlQueryPermissions:
     def test_author_articles_without_required_headers_set(self, hge_ctx, transport):
         check_query_f(hge_ctx, self.dir() + '/select_articles_without_required_headers.yaml', transport)
 
+    def test_reader_author(self, hge_ctx, transport):
+        check_query_f(hge_ctx, self.dir() + '/reader_author.yaml', transport)
+
+    def test_tutor_get_students(self, hge_ctx, transport):
+        check_query_f(hge_ctx, self.dir() + '/tutor_get_students.yaml', transport)
+
+    def test_tutor_get_students_session(self, hge_ctx, transport):
+        check_query_f(hge_ctx, self.dir() + '/tutor_get_students_session.yaml', transport)
+
     @classmethod
     def dir(cls):
         return 'queries/graphql_query/permissions'
@@ -705,7 +736,6 @@ class TestGraphQLInheritedRolesMSSQL:
 
     def test_inherited_role_when_some_roles_may_not_have_permission_configured(self, hge_ctx, transport):
         check_query_f(hge_ctx, self.dir() + '/inherited_role_with_some_roles_having_no_permissions.yaml')
-
 
 @pytest.mark.parametrize("transport", ['http', 'websocket', 'subscription'])
 @pytest.mark.parametrize("backend", ['postgres', 'mssql'])
@@ -895,6 +925,12 @@ class TestGraphQLQueryOrderBy:
 
     def test_album_order_by_tracks_tags(self, hge_ctx, transport):
         check_query_f(hge_ctx, self.dir() + '/album_order_by_tracks_tags.yaml', transport)
+
+    def test_Track_order_by_size(self, hge_ctx, transport):
+        check_query_f(hge_ctx, self.dir() + '/Track_order_by_size.yaml', transport)
+
+    def test_author_order_by_get_articles_aggregate(self, hge_ctx, transport):
+        check_query_f(hge_ctx, self.dir() + '/author_order_by_get_articles_aggregate.yaml', transport)
 
     @classmethod
     def dir(cls):
@@ -1114,7 +1150,7 @@ class TestGraphQLExplain:
         if req_st != 200:
             # return early in case we're testing for failures
             return
-        
+
         # Comparing only with generated 'sql' since the 'plan' may differ
         resp_sql = resp_json[0]['sql']
         exp_sql = conf['response'][0]['sql']
