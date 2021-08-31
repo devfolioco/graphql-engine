@@ -69,21 +69,6 @@ if [ -z ${HASURA_GRAPHQL_SEEDS_DIR+x} ]; then
     HASURA_GRAPHQL_SEEDS_DIR="$DEFAULT_SEEDS_DIR"
 fi
 
-# apply metadata if the directory exist
-if [ -d "$HASURA_GRAPHQL_METADATA_DIR" ]; then
-    rm -rf "TEMP_PROJECT_DIR"
-    log "migrations-apply" "applying metadata from $HASURA_GRAPHQL_METADATA_DIR"
-    mkdir -p "$TEMP_PROJECT_DIR"
-    cp -a "$HASURA_GRAPHQL_METADATA_DIR/." "$TEMP_PROJECT_DIR/metadata/"
-    cd "$TEMP_PROJECT_DIR"
-    echo "version: 3" > config.yaml
-    echo "endpoint: http://localhost:$HASURA_GRAPHQL_MIGRATIONS_SERVER_PORT" >> config.yaml
-    echo "metadata_directory: metadata" >> config.yaml
-    hasura-cli metadata apply 
-else
-    log "migrations-apply" "directory $HASURA_GRAPHQL_METADATA_DIR does not exist, skipping metadata"
-fi
-
 # apply migrations if the directory exist
 if [ -d "$HASURA_GRAPHQL_MIGRATIONS_DIR" ]; then
     log "migrations-apply" "applying migrations from $HASURA_GRAPHQL_MIGRATIONS_DIR"
@@ -97,6 +82,21 @@ if [ -d "$HASURA_GRAPHQL_MIGRATIONS_DIR" ]; then
     hasura-cli metadata reload
 else
     log "migrations-apply" "directory $HASURA_GRAPHQL_MIGRATIONS_DIR does not exist, skipping migrations"
+fi
+
+# apply metadata if the directory exist
+if [ -d "$HASURA_GRAPHQL_METADATA_DIR" ]; then
+    rm -rf "TEMP_PROJECT_DIR"
+    log "migrations-apply" "applying metadata from $HASURA_GRAPHQL_METADATA_DIR"
+    mkdir -p "$TEMP_PROJECT_DIR"
+    cp -a "$HASURA_GRAPHQL_METADATA_DIR/." "$TEMP_PROJECT_DIR/metadata/"
+    cd "$TEMP_PROJECT_DIR"
+    echo "version: 3" > config.yaml
+    echo "endpoint: http://localhost:$HASURA_GRAPHQL_MIGRATIONS_SERVER_PORT" >> config.yaml
+    echo "metadata_directory: metadata" >> config.yaml
+    hasura-cli metadata apply 
+else
+    log "migrations-apply" "directory $HASURA_GRAPHQL_METADATA_DIR does not exist, skipping metadata"
 fi
 
 # apply seeds if the directory exist
