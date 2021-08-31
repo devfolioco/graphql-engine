@@ -115,9 +115,10 @@ If it has been stored in a directory other than the default then it can be confi
 ### How to publish AMD64 image
 
 ```
-docker build --build-arg SERVER_IMAGE_TAG=v2.0.1 -t ghcr.io/devfolioco/graphql-engine:v2.0.1.cli-migrations-v3-md64 .
+docker build --build-arg SERVER_IMAGE_TAG=v2.0.6 --no-cache -t ghcr.io/devfolioco/graphql-engine:v2.0.6.cli-migrations-v3-amd64 .
 
-docker push ghcr.io/devfolioco/graphql-engine:v2.0.1.cli-migrations-v3-amd64
+docker push ghcr.io/devfolioco/graphql-engine:v2.0.6.cli-migrations-v3-amd64
+
 ```
 
 ### How to publish ARM64 image
@@ -125,7 +126,7 @@ docker push ghcr.io/devfolioco/graphql-engine:v2.0.1.cli-migrations-v3-amd64
 Make sure the code in the Dockerfile is configured to use the ARM64 files and ARM64 version of Hasura
 
 ```
-docker build --build-arg SERVER_IMAGE_TAG=v2.0.1 -t ghcr.io/devfolioco/graphql-engine:v2.0.1.cli-migrations-v3-arm64 .
+docker build --build-arg SERVER_IMAGE_TAG=v2.0.6 --no-cache -t ghcr.io/devfolioco/graphql-engine:v2.0.6.cli-migrations-v3-arm64 .
 
-docker push ghcr.io/devfolioco/graphql-engine:v2.0.1.cli-migrations-v3-arm64
+docker push ghcr.io/devfolioco/graphql-engine:v2.0.6.cli-migrations-v3-arm64
 ```
