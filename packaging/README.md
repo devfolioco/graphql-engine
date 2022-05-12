@@ -31,5 +31,5 @@ It is generally published with format `hasura/graphql-engine-base:<SHA256>.<OS>.
 ### How to publish images
 
 ```
-docker buildx build --build-arg BASE_IMAGE=hasura/graphql-engine:v2.6.1 --no-cache -t ghcr.io/devfolioco/graphql-engine:v0.2.6.1.cli-migrations-v3 --platform linux/amd64,linux/arm64 --push .
+docker buildx build --build-arg BASE_IMAGE=hasura/graphql-engine:v2.6.1 --no-cache -t ghcr.io/devfolioco/graphql-engine:v1.2.6.1.cli-migrations-v3 --platform linux/amd64,linux/arm64 --push .
 ```

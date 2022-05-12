@@ -1,6 +1,8 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 
+ARG TARGETARCH
+
 # yum update uses --nobest option to tackle https://github.com/hasura/graphql-engine-mono/issues/4096
 RUN { apt-get update && apt-get install -y netcat; } \
   || { yum update -y --nobest && yum install -y nc; }
@@ -18,7 +20,7 @@ RUN mkdir -p /.hasura \
 ENV HASURA_GRAPHQL_SHOW_UPDATE_NOTIFICATION=false
 
 COPY docker-entrypoint.sh /bin/
-COPY hasura-cli /bin/hasura-cli
+COPY cli-hasura-linux-${TARGETARCH} /bin/hasura-cli
 
 RUN chmod +x /bin/hasura-cli 
 
