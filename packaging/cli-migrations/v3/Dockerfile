@@ -30,4 +30,5 @@ ENV HGE_BINARY=${HGE_BINARY}
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD $HGE_BINARY serve
+# CMD $HGE_BINARY serve
+# CMD ["graphql-engine", "serve"]
